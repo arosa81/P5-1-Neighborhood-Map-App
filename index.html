@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AJR Map Finder</title>
+  </head>
+  <body>
+    <section class="container-fluid" id="mapSection">
+    </section>
+    <div class="row map-search">
+      <!-- <div class="col-sm-4 col-sm-offset-4"> -->
+        <div class="input-group">
+          <!-- <span class="input-group-addon" id="basic-addon1">@</span> -->
+          <input type="text" class="form-control" placeholder="Search for something..." aria-describedby="map-search">
+        </div>
+      <!-- </div> -->
+    </div>
+    <div class="col-sm-3 left-panel" data-bind: "with: locations">
+      <div class="list-search">
+        <p>
+          search here
+        </p>
+      </div>
+      <ul class="left-panel-items" data-bind="foreach: locations">
+        <li class="left-panel-item" data-bind="click: $parent.selectListMarker">
+          <h5 data-bind="text: name"></h5>
+          <p data-bind="text: rating"></p>
+          <p data-bind="text: opening_hours.open_now"></p>
+          <img src="" alt="" data-bind="attr: {src: photos.getUrl, height: photos.height, width: photos.width}"/>
+          <hr>
+        </li>
+      </ul>
+    </div>
+    <div class="mobile-panel">
+      <div class="mobile-list-search">
+        <p>
+          search here
+        </p>
+      </div>
+      <div class="mobile-list">
+        <p>
+          test center block <br>
+          ok <br>
+          more1 <br>
+          more1 <br>
+          more1 <br>
+          more1 <br>
+          more1 very long string that goes on forever and ever...<br>
+        </p>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/knockout/3.4.0/knockout.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places,drawing,geometry"></script>
+    <script src="./src/js/main.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./src/css/main.css">
+  </body>
+</html>

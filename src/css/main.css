@@ -1,0 +1,107 @@
+* {
+  /*border-style: solid;
+  border-width: thin;*/
+  font-size: 16px;
+}
+
+body {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+}
+
+div {
+  /*color: purple;*/
+}
+
+.container-fluid, #mapSection, #componentLayer {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+}
+
+#componentLayer {
+  color: green;
+  display: flex;
+  justify-content: center;
+  z-index: -1;
+}
+
+.row {
+  min-height: 5vh;
+  color: red;
+}
+
+.col-sm-4 {
+  /*height: 50vh;*/
+  color: blue;
+}
+
+.map-search {
+  color: green;
+  background-color: #3d3d3e;
+  opacity: 0.6;
+  display: flex;
+  justify-content: center;
+  z-index: 2;
+}
+
+.left-panel {
+  background-color: #3d3d3e;
+  opacity: 0.6;
+  position: absolute;
+  top: 5em;
+  left: 1em;
+  z-index: 2;
+  width: 30%;
+  min-width: 300px;
+  flex-flow: column wrap;
+  max-height: 80%;
+  overflow: scroll;
+}
+
+.left-panel-items {
+  opacity: 1;
+  word-wrap: break-word;
+  list-style: none;
+  color: white;
+  font-weight: bolder;
+}
+
+.mobile-panel {
+  color: red;
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  /*align-items: flex-end;*/
+  display: none;
+}
+
+/* Smartphones (portrait) */
+@media only screen and (max-width: 768px) {
+  body { font-size: 16px;}
+  header p { padding-left: 4.5em;}
+
+  .left-panel {
+    display: none;
+  }
+
+  .mobile-panel {
+    position: absolute;
+    top: 90%;
+    background-color: #3d3d3e;
+    opacity: 0.6;
+    display: flex;
+    flex-flow: column wrap;
+    align-self: center;
+    justify-content: center;
+  }
+
+  .mobile-list {
+
+  }
+}
