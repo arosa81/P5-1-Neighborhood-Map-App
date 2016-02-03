@@ -64,12 +64,37 @@ div {
   overflow: scroll;
 }
 
+.input-group {
+  display: flex;
+}
+
+.form-control {
+  opacity: 0.8;
+  background-color: #3d3d3e;
+  color: white;
+  font-weight: bolder;
+}
+
 .left-panel-items {
   opacity: 1;
   word-wrap: break-word;
   list-style: none;
   color: white;
   font-weight: bolder;
+  padding: 0;
+}
+
+.left-panel-items li:hover {
+  /*background-color: #9e6502;*/
+  /*background-color: #835503;*/
+  background-color: #6f4802;
+  cursor: pointer;
+}
+
+/* TODO: correct active selection state */
+.left-panel-items li:active {
+  background-color: #6f4802;
+  cursor: pointer;
 }
 
 .mobile-panel {

@@ -17,17 +17,17 @@
       <!-- </div> -->
     </div>
     <div class="col-sm-3 left-panel" data-bind: "with: locations">
-      <div class="list-search">
-        <p>
-          search here
-        </p>
-      </div>
-      <ul class="left-panel-items" data-bind="foreach: locations">
-        <li class="left-panel-item" data-bind="click: $parent.selectListMarker">
+      <!-- <div class="list-search"> -->
+        <div class="input-group list-search">
+          <!-- <span class="input-group-addon" id="basic-addon1">@</span> -->
+          <input type="text" class="form-control" placeholder="Filter search results" aria-describedby="list-search" data-bind="value: inputVal, valueUpdate: ['input', 'afterkeydown']">
+        </div>
+      <!-- </div> -->
+      <ul class="left-panel-items" data-bind="foreach: filteredLocations">
+        <li class="left-panel-item" data-bind="click: $parent.selectListMarker, visible: $parent.filteredLocations">
           <h5 data-bind="text: name"></h5>
-          <p data-bind="text: rating"></p>
-          <p data-bind="text: opening_hours.open_now"></p>
-          <img src="" alt="" data-bind="attr: {src: photos.getUrl, height: photos.height, width: photos.width}"/>
+          <h6 data-bind="text: formatted_address"></h6>
+          <!-- <img src="" alt="" data-bind="attr: {src: rating_img_url()}"/>  <span data-bind="text: rating"></span> -->
           <hr>
         </li>
       </ul>
@@ -55,6 +55,13 @@
     <script src="https://cdn.jsdelivr.net/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/knockout/3.4.0/knockout.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places,drawing,geometry"></script>
+
+    <!-- third party libraries for oauth -->
+    <script src="./src/lib/url.min.js"></script>
+    <script src="./src/lib/cryptojs/hmac-sha1.js"></script>
+    <script src="./src/lib/cryptojs/enc-base64-min.js"></script>
+
+    <script src="./src/js/oauth-signature.js"></script>
     <script src="./src/js/main.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="./src/css/main.css">
