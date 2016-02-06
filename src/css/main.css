@@ -1,21 +1,11 @@
 * {
-  /*border-style: solid;
-  border-width: thin;*/
   font-size: 16px;
 }
 
 body {
   display: flex;
-  /*height: 100%;*/
   width: 100%;
-  /*justify-content: center;*/
-  /*flex-direction: column;
-  -ms-align-items: center;*/
   align-items: center;
-}
-
-div {
-  /*color: purple;*/
 }
 
 .container-fluid, #mapSection, #componentLayer {
@@ -86,12 +76,28 @@ img {
   cursor: pointer;
 }
 
-/* TODO: correct active selection state */
-/*.left-panel-item:active {
-  background-color: #6f4802;
-  border-color: red;
-  border-style: dashed;
-}*/
+.infoWindow-Container {
+  display: flex;
+  /*max-width: 200px;*/
+  flex-direction: column;
+}
+
+.infoWindow-Content-Top {
+  /*width: 60%;*/
+  display: flex;
+  justify-content: space-between;
+}
+
+.infoWindow-Content-Right {
+  padding: 0 0 0 1em;
+}
+
+.infoWindow-Content-Bottom {
+  /*width: 40%;*/
+  display: flex;
+  max-width: 300px;
+  flex-direction: column;
+}
 
 /* Smartphones (portrait) */
 @media only screen and (max-width: 768px) and (orientation: portrait) {

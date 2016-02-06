@@ -18,10 +18,6 @@ var app = (function() {
       this.locations = [];
       coordInfoWindow = new google.maps.InfoWindow();
 
-  var getGeoLocs = function() {
-    return locs;
-  };
-
   var setGeoLocs = function(locs) {
     that.locs = locs;
   };
@@ -79,13 +75,9 @@ var app = (function() {
       success: function(data) {
         for (var i = 0; i < data.businesses.length; i++) {
           createMarker({location: data.businesses[i], marker: data.businesses[i]});
-          console.log('OAUTH Create Marker: ', data.businesses[i]);
           that.locations.push({location: data.businesses[i], marker: marker});
         }
-        console.log('initial locations array: ', that.locations);
-
         ko.applyBindings(new ViewModel());
-        console.log("YELP SUCCESS! %o", data);
       },
       error: function(data) {
         console.log("YELP error %o", data);
@@ -102,7 +94,7 @@ var app = (function() {
     yelpConnect(locationSearchQueryTerm);
   };
 
-  var error_geo = function(errored, coordInfoWindow, locs) {
+  var error_geo = function(errored, locs) {//coordInfoWindow, locs) {
     errored = true;
     setGeoLocs(locs);
     yelpConnect(locationSearchQueryTerm);
@@ -137,21 +129,58 @@ var app = (function() {
 
   var showMarkerInfoWindow = function(place) {
     google.maps.event.addListener(marker, 'click', function() {
-      console.log('CLICK EVENT: ', place);
-      coordInfoWindow.setContent(place.location.name);
+      createInfoWindow(place);
       coordInfoWindow.open(map, this);
       map.panTo(this.getPosition());
     });
   };
 
-  var selectListMarker = function(venue) {//marker) {
-    console.log('selectListMarker VENUE: ', venue);
+  var createInfoWindow = function(place) {
+    if (place.location.image_url === undefined) {
+      place.location.image_url = '';
+    }
+    if (place.location.snippet_text === undefined) {
+      place.location.snippet_text = '';
+    }
+    if (place.location.display_phone === undefined) {
+      place.location.display_phone = '';
+    }
+
+    var contentString =
+    '<div class="infoWindow-Container">'+
+      '<div class="infoWindow-Content-Top">'+
+        '<div class="infoWindow-Content-Left">'+
+          '<h5 data-bind="text: name">' + place.location.name + '</h5>'+
+          '<img src="' + place.location.rating_img_url + '" alt="" data-bind="attr: {src: rating_img_url}"/>'+
+          '<span data-bind="text: rating">  ' + place.location.rating + '</span><br>'+
+          '<i class="fa fa-phone-square"></i>  ' + place.location.display_phone +
+        '</div>'+
+        '<div class="infoWindow-Content-Right">'+
+          '<img src="' + place.location.image_url + '" alt="" data-bind="visible: location.image_url"/>'+
+        '</div>'+
+      '</div>'+
+      '<div class="infoWindow-Content-Bottom">' +
+        '<p data-bind="text: snippet_text">' + place.location.snippet_text + '</p>'+
+        '<a href="' + place.location.mobile_url + '" target="_blank" data-bind="attr: {href: yelpURL}, visible: yelpURL">Click here to view details on Yelp</a>' +
+      '</div>' +
+    '</div>';
+    var pixelOffset = {width: 50, height: 0};
+    coordInfoWindow.setContent(contentString);
+    coordInfoWindow.setOptions({pixelOffset: pixelOffset});
+  };
+
+  var selectListMarker = function(venue) {
     venue.marker().setAnimation(google.maps.Animation.BOUNCE);
     map.setZoom(14);
     setTimeout(function() {
       venue.marker().setAnimation(null);
     }, 1400);
-    coordInfoWindow.setContent(venue.name());
+    for (var i = 0; i < self.locations.length; i++) {
+      if (venue.id() === self.locations[i].location.id) {
+        createInfoWindow(self.locations[i]);
+        break;
+      }
+    }
     coordInfoWindow.open(map, venue.marker());
     map.panTo(venue.marker().getPosition());
   };
@@ -165,9 +194,7 @@ var app = (function() {
 
   return {
     map: map,
-    getGeoLocs: getGeoLocs,
     setGeoLocs: setGeoLocs,
-    initMap: initMap,
     getLocations: getLocations,
     getMarkers: getMarkers,
     getSearchRadius: getSearchRadius,
@@ -188,38 +215,31 @@ var Venue = function(venue) {
   this.image_url = ko.observable(venue.location.image_url);
   this.rating_img_url = ko.observable(venue.location.rating_img_url);
   this.rating = ko.observable(venue.location.rating);
-  this.types = ko.observable(venue.types);
-  this.review_count = ko.observable(venue.review_count);
-  this.snippet_text = ko.observable(venue.snippet_text);
-  this.url = ko.observable(venue.url);
+  this.types = ko.observable(venue.location.types);
+  this.review_count = ko.observable(venue.location.review_count);
+  this.snippet_text = ko.observable(venue.location.snippet_text);
+  this.yelpURL = ko.observable(venue.location.mobile_url);
   this.marker = ko.observable(venue.marker);
 };
 
 var ViewModel = function() {
-  console.dir(window);
-  console.dir(app.getLocations());
   var self = this;
   this.locations = ko.observableArray([]);
   this.markers = ko.observableArray([]);
   this.totalNumLocs = app.getLocations().length;
   this.totalNumMarkers = app.getMarkers().length;
   this.inputVal = ko.observable('');
-  var geoLocsLatLng = app.getGeoLocs();
 
   var addObservableLocations = function() {
     for (var i = 0; i < self.totalNumLocs; i++) {
       self.locations.push(new Venue(app.getLocations()[i]));
     }
-    console.log('22222 self.locations(): ' + self.totalNumLocs);
-    console.dir(self.locations());
   };
 
   var addObservableMarkers = function() {
     for (var i = 0; i < self.totalNumMarkers; i++) {
       self.markers.push(app.getMarkers()[i]);
     }
-    console.log('33333 self.markers(): ' + self.totalNumMarkers);
-    console.dir(self.markers());
   };
 
   if (self.totalNumLocs) {
@@ -230,7 +250,7 @@ var ViewModel = function() {
 
   this.selectListMarker = function(clickedListMarker) {
     self.currentListMarker(clickedListMarker);
-    app.selectListMarker(self.currentListMarker());//.marker());
+    app.selectListMarker(self.currentListMarker());
   };
 
   this.filteredLocations = ko.computed(function() {
