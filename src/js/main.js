@@ -78,7 +78,8 @@ var app = (function() {
       dataType: 'jsonp',
       success: function(data) {
         for (var i = 0; i < data.businesses.length; i++) {
-          createMarker(data.businesses[i]);
+          createMarker({location: data.businesses[i], marker: data.businesses[i]});
+          console.log('OAUTH Create Marker: ', data.businesses[i]);
           that.locations.push({location: data.businesses[i], marker: marker});
         }
         console.log('initial locations array: ', that.locations);
@@ -121,41 +122,38 @@ var app = (function() {
 
   var createMarker = function(place) {
     var position = {
-      lat: place.location.coordinate.latitude,
-      lng: place.location.coordinate.longitude
+      lat: place.location.location.coordinate.latitude,
+      lng: place.location.location.coordinate.longitude
     };
 
     marker = new google.maps.Marker({
       map: map,
       animation: google.maps.Animation.DROP,
       position: position,
-      title: place.id
+      title: place.location.id,
     });
-    // markers.push({marker: marker});
     showMarkerInfoWindow(place);
   };
 
   var showMarkerInfoWindow = function(place) {
     google.maps.event.addListener(marker, 'click', function() {
-      coordInfoWindow.setContent(place.name);
+      console.log('CLICK EVENT: ', place);
+      coordInfoWindow.setContent(place.location.name);
       coordInfoWindow.open(map, this);
-      map.setCenter(this.position);
+      map.panTo(this.getPosition());
     });
   };
 
-  var selectListMarker = function(marker) {
-    marker.setAnimation(google.maps.Animation.BOUNCE);
+  var selectListMarker = function(venue) {//marker) {
+    console.log('selectListMarker VENUE: ', venue);
+    venue.marker().setAnimation(google.maps.Animation.BOUNCE);
     map.setZoom(14);
     setTimeout(function() {
-      marker.setAnimation(null);
+      venue.marker().setAnimation(null);
     }, 1400);
-    for (var i = 0; i < locations.length; i++) {
-      if (locations[i].location.id === marker.title) {
-        coordInfoWindow.setContent(locations[i].location.name);
-        coordInfoWindow.open(map, marker);
-        map.panTo(marker.getPosition());
-      }
-    }
+    coordInfoWindow.setContent(venue.name());
+    coordInfoWindow.open(map, venue.marker());
+    map.panTo(venue.marker().getPosition());
   };
 
   if (typeof google !== 'undefined') {
@@ -185,11 +183,11 @@ var Venue = function(venue) {
   this.name = ko.observable(venue.location.name);
   this.formatted_address = ko.observable(venue.location.location.display_address[0]);
   this.geoLocation = ko.observable(venue.location.coordinate);
-  this.icon = ko.observable(venue.icon);
-  this.is_closed = ko.observable(venue.is_closed);
-  this.image_url = ko.observable(venue.image_url);
-  rating_img_url = ko.observable(venue.rating_img_url);
-  this.rating = ko.observable(venue.rating);
+  this.distance = ko.observable(venue.location.distance);
+  this.is_closed = ko.observable(venue.location.is_closed);
+  this.image_url = ko.observable(venue.location.image_url);
+  this.rating_img_url = ko.observable(venue.location.rating_img_url);
+  this.rating = ko.observable(venue.location.rating);
   this.types = ko.observable(venue.types);
   this.review_count = ko.observable(venue.review_count);
   this.snippet_text = ko.observable(venue.snippet_text);
@@ -207,9 +205,6 @@ var ViewModel = function() {
   this.totalNumMarkers = app.getMarkers().length;
   this.inputVal = ko.observable('');
   var geoLocsLatLng = app.getGeoLocs();
-  console.log(this.inputVal());
-  // console.log('22222 self.locations(): ' + self.totalNumLocs);
-  // console.dir(self.locations());
 
   var addObservableLocations = function() {
     for (var i = 0; i < self.totalNumLocs; i++) {
@@ -222,7 +217,6 @@ var ViewModel = function() {
   var addObservableMarkers = function() {
     for (var i = 0; i < self.totalNumMarkers; i++) {
       self.markers.push(app.getMarkers()[i]);
-      // console.dir(self.markers()[i]);
     }
     console.log('33333 self.markers(): ' + self.totalNumMarkers);
     console.dir(self.markers());
@@ -236,7 +230,7 @@ var ViewModel = function() {
 
   this.selectListMarker = function(clickedListMarker) {
     self.currentListMarker(clickedListMarker);
-    app.selectListMarker(self.currentListMarker().marker());
+    app.selectListMarker(self.currentListMarker());//.marker());
   };
 
   this.filteredLocations = ko.computed(function() {
