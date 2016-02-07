@@ -16,14 +16,10 @@ var app = (function() {
       marker,
       markers = [];
       this.locations = [];
-      coordInfoWindow = new google.maps.InfoWindow();
+      var coordInfoWindow;
 
   var setGeoLocs = function(locs) {
     that.locs = locs;
-  };
-
-  var getLocationSearchQueryTerm = function() {
-    return locationSearchQueryTerm;
   };
 
   var getLocations = function() {
@@ -32,10 +28,6 @@ var app = (function() {
 
   var getMarkers = function() {
     return markers;
-  };
-
-  var getSearchRadius = function() {
-    return searchRadius;
   };
 
   function nonce_generate() {
@@ -80,6 +72,7 @@ var app = (function() {
         ko.applyBindings(new ViewModel());
       },
       error: function(data) {
+        $('body').append('<p class="bg-danger">...</p>');
         console.log("YELP error %o", data);
       }
     };
@@ -94,7 +87,7 @@ var app = (function() {
     yelpConnect(locationSearchQueryTerm);
   };
 
-  var error_geo = function(errored, locs) {//coordInfoWindow, locs) {
+  var error_geo = function(errored, locs) {
     errored = true;
     setGeoLocs(locs);
     yelpConnect(locationSearchQueryTerm);
@@ -108,7 +101,7 @@ var app = (function() {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(success_geo, error_geo);
     } else {
-      error_geo(false, coordInfoWindow, map.getCenter());
+      error_geo(false, map.getCenter());
     }
   };
 
@@ -127,8 +120,17 @@ var app = (function() {
     showMarkerInfoWindow(place);
   };
 
+  var animateMarker = function(marker) {
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    setTimeout(function() {
+      marker.setAnimation(null);
+    }, 1400);
+  };
+
   var showMarkerInfoWindow = function(place) {
+    coordInfoWindow = new google.maps.InfoWindow();
     google.maps.event.addListener(marker, 'click', function() {
+      animateMarker(this);
       createInfoWindow(place);
       coordInfoWindow.open(map, this);
       map.panTo(this.getPosition());
@@ -170,11 +172,7 @@ var app = (function() {
   };
 
   var selectListMarker = function(venue) {
-    venue.marker().setAnimation(google.maps.Animation.BOUNCE);
-    map.setZoom(14);
-    setTimeout(function() {
-      venue.marker().setAnimation(null);
-    }, 1400);
+    animateMarker(venue.marker());
     for (var i = 0; i < self.locations.length; i++) {
       if (venue.id() === self.locations[i].location.id) {
         createInfoWindow(self.locations[i]);
@@ -189,7 +187,7 @@ var app = (function() {
     // Initializing map
     initMap();
   } else {
-    console.log("Error loading Google Maps API");
+    $('body').append('<p class="bg-danger">...</p>');
   }
 
   return {
@@ -197,26 +195,18 @@ var app = (function() {
     setGeoLocs: setGeoLocs,
     getLocations: getLocations,
     getMarkers: getMarkers,
-    getSearchRadius: getSearchRadius,
     selectListMarker: selectListMarker,
-    showMarkerInfoWindow: showMarkerInfoWindow,
-    getLocationSearchQueryTerm: getLocationSearchQueryTerm
   };
 })();
 
 var Venue = function(venue) {
-  var self = this;
   this.id = ko.observable(venue.location.id);
   this.name = ko.observable(venue.location.name);
   this.formatted_address = ko.observable(venue.location.location.display_address[0]);
-  this.geoLocation = ko.observable(venue.location.coordinate);
   this.distance = ko.observable(venue.location.distance);
-  this.is_closed = ko.observable(venue.location.is_closed);
   this.image_url = ko.observable(venue.location.image_url);
   this.rating_img_url = ko.observable(venue.location.rating_img_url);
   this.rating = ko.observable(venue.location.rating);
-  this.types = ko.observable(venue.location.types);
-  this.review_count = ko.observable(venue.location.review_count);
   this.snippet_text = ko.observable(venue.location.snippet_text);
   this.yelpURL = ko.observable(venue.location.mobile_url);
   this.marker = ko.observable(venue.marker);
@@ -236,15 +226,8 @@ var ViewModel = function() {
     }
   };
 
-  var addObservableMarkers = function() {
-    for (var i = 0; i < self.totalNumMarkers; i++) {
-      self.markers.push(app.getMarkers()[i]);
-    }
-  };
-
   if (self.totalNumLocs) {
     addObservableLocations();
-    addObservableMarkers();
     this.currentListMarker = ko.observable();
   }
 
