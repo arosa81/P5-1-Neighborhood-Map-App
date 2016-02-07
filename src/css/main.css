@@ -54,10 +54,6 @@ body {
   border-bottom: 1px solid white;
 }
 
-img {
-  opacity: 1;
-}
-
 .left-panel-items li:hover {
   background-color: #6f4802;
   cursor: pointer;
@@ -65,12 +61,10 @@ img {
 
 .infoWindow-Container {
   display: flex;
-  /*max-width: 200px;*/
   flex-direction: column;
 }
 
 .infoWindow-Content-Top {
-  /*width: 60%;*/
   display: flex;
   justify-content: space-between;
 }
@@ -80,10 +74,18 @@ img {
 }
 
 .infoWindow-Content-Bottom {
-  /*width: 40%;*/
   display: flex;
   max-width: 300px;
   flex-direction: column;
+}
+
+.bg-danger {
+  color: rgb(1, 1, 1);
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  padding: 20%;
+  height: 100vh;
 }
 
 /* Smartphones (portrait) */
@@ -91,16 +93,15 @@ img {
   body {
     font-size: 16px;
     display: flex;
-    /*height: 100%;*/
     width: 100%;
-    /*justify-content: center;*/
     flex-direction: column;
-    /*-ms-align-items: center;*/
     align-items: center;
     flex-grow: 1;
   }
 
-  header p { padding-left: 4.5em;}
+  header p {
+    padding-left: 4.5em;
+  }
 
   .left-panel {
     display: flex;
@@ -110,7 +111,6 @@ img {
     background-color: #3d3d3e;
     opacity: 0.6;
     width: 80%;
-    /*flex-basis: 30em;*/
     max-height: 35vh;
     flex-direction: column;
     border-radius: 5px;
@@ -124,29 +124,22 @@ img {
   body {
     font-size: 16px;
     display: flex;
-    /*height: 100%;*/
     width: 100%;
-    /*justify-content: center;*/
     flex-direction: column;
-    /*-ms-align-items: center;*/
     align-items: flex-start;;
     flex-grow: 1;
   }
 
-  header p { padding-left: 4.5em;}
+  header p {
+    padding-left: 4.5em;
+  }
 
   .left-panel {
     display: flex;
     background-color: #3d3d3e;
     opacity: 0.6;
-    /*position: absolute;
-    top: 5em;
-    left: 1em;*/
-    /*z-index: 2;*/
     width: 30%;
     height: 70%;
-    /*flex-basis: 9em;*/
-    /*min-width: 300px;*/
     flex-direction: column;
     max-height: 70vh;
     padding: 0.5em;

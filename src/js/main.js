@@ -14,26 +14,54 @@ var app = (function() {
       searchRadius = 800,
       locationSearchQueryTerm = 'coffee shops',
       marker,
-      markers = [];
+      markers = [],
+      coordInfoWindow;
       this.locations = [];
-      var coordInfoWindow;
 
+  /**
+  * @name setGeoLocs
+  * @description Setter to update location object
+  * @function
+  * @param {object} locs - location object (lat, lng)
+  */
+  var getGeoLocs = function() {
+    return locs;
+  };
+
+  /**
+  * @name setGeoLocs
+  * @description Setter to update location object
+  * @function
+  * @param {object} locs - location object (lat, lng)
+  */
   var setGeoLocs = function(locs) {
     that.locs = locs;
   };
 
+  /**
+  * @name getLocations
+  * @description Getter to retrieve location array
+  * @function
+  */
   var getLocations = function() {
     return locations;
   };
 
-  var getMarkers = function() {
-    return markers;
-  };
-
+  /**
+  * @name nonce_generate
+  * @description Number generator used by the yelpConnect method. Open source attributed to github user bettilio -> https://github.com/bettiolo/oauth-signature-js
+  * @function
+  */
   function nonce_generate() {
     return (Math.floor(Math.random() * 1e12).toString());
   }
 
+  /**
+  * @name yelpConnect
+  * @description Generates OAuth signature for Yelp's api. Open source attributed to github user bettilio -> https://github.com/bettiolo/oauth-signature-js
+  * @function
+  * @param {String} nameLocation - term used for parameters object
+  */
   var yelpConnect = function (nameLocation) {
     var httpMethod = 'GET',
         consumerKey = 'fjRNEsukXhL1FB3CIqPcag',
@@ -65,6 +93,9 @@ var app = (function() {
       cache: true,
       dataType: 'jsonp',
       success: function(data) {
+        //on success creates marker and location object and pushes them in locations array
+        //ko bindings begins here
+        console.log("YELP success %o", data);
         for (var i = 0; i < data.businesses.length; i++) {
           createMarker({location: data.businesses[i], marker: data.businesses[i]});
           that.locations.push({location: data.businesses[i], marker: marker});
@@ -72,27 +103,46 @@ var app = (function() {
         ko.applyBindings(new ViewModel());
       },
       error: function(data) {
-        $('body').append('<p class="bg-danger">...</p>');
+        //if error with authenticating to Yelp API display this friendly message
+        $('.left-panel-items').append('<li><p class="bg-danger">Oops...Something went wrong in contacting Yelp. Please refresh or try later.</p></li>');
         console.log("YELP error %o", data);
       }
     };
     $.ajax(settings);
   };
 
+  /**
+  * @name success_geo
+  * @description function triggers when Geolocation is successful. Centers map, updates global location object, adds center Geolocation marker, triggers Yelp API request.
+  * @function
+  * @param {Object} position - Represents location object (lat, lng)
+  */
   var success_geo = function(position) {
     locs.lat = position.coords.latitude;
     locs.lng = position.coords.longitude;
     map.setCenter(locs);
     setGeoLocs(locs);
+    addCenterMarker();
     yelpConnect(locationSearchQueryTerm);
   };
 
-  var error_geo = function(errored, locs) {
+  /**
+  * @name error_geo
+  * @description function triggers when Geolocation is unsuccessful. Flags error state, adds center Geolocation marker using global location object, and triggers Yelp API request.
+  * @function
+  * @param {boolean} errored - Represents success error state
+  */
+  var error_geo = function(errored) {
     errored = true;
-    setGeoLocs(locs);
+    addCenterMarker();
     yelpConnect(locationSearchQueryTerm);
   };
 
+  /**
+  * @name initMap
+  * @description Initializes the map object, passes it to global variable, and initiates Geolocation request process.
+  * @function
+  */
   var initMap = function() {
     map = new google.maps.Map(document.getElementById('mapSection'), mapOptions);
     that.map = map;
@@ -101,10 +151,33 @@ var app = (function() {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(success_geo, error_geo);
     } else {
-      error_geo(false, map.getCenter());
+      error_geo(false);
     }
   };
 
+  /**
+  * @name addCenterMarker
+  * @description Adds marker to map that reflects users location only after initilization of map.
+  * @function
+  */
+  var addCenterMarker = function() {
+    var marker = new google.maps.Marker({
+        position: map.getCenter(),
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 5,
+        },
+        clickable: false,
+        map: map
+      });
+  };
+
+  /**
+  * @name createMarker
+  * @description creates a map marker and associates marker with info window event.
+  * @function
+  * @param {Object} place - Represents location object from locations array
+  */
   var createMarker = function(place) {
     var position = {
       lat: place.location.location.coordinate.latitude,
@@ -120,6 +193,12 @@ var app = (function() {
     showMarkerInfoWindow(place);
   };
 
+  /**
+  * @name animateMarker
+  * @description animates a marker when selected for the list.
+  * @function
+  * @param {Object} marker - Represents marker object from locations array
+  */
   var animateMarker = function(marker) {
     marker.setAnimation(google.maps.Animation.BOUNCE);
     setTimeout(function() {
@@ -127,6 +206,12 @@ var app = (function() {
     }, 1400);
   };
 
+  /**
+  * @name showMarkerInfoWindow
+  * @description animates a marker when selected for the list.
+  * @function
+  * @param {Object} place - Represents location object from locations array
+  */
   var showMarkerInfoWindow = function(place) {
     coordInfoWindow = new google.maps.InfoWindow();
     google.maps.event.addListener(marker, 'click', function() {
@@ -137,6 +222,12 @@ var app = (function() {
     });
   };
 
+  /**
+  * @name createInfoWindow
+  * @description creates an infowindow object to a marker and passes venue information.
+  * @function
+  * @param {Object} place - Represents location object from locations array
+  */
   var createInfoWindow = function(place) {
     if (place.location.image_url === undefined) {
       place.location.image_url = '';
@@ -166,11 +257,17 @@ var app = (function() {
         '<a href="' + place.location.mobile_url + '" target="_blank" data-bind="attr: {href: yelpURL}, visible: yelpURL">Click here to view details on Yelp</a>' +
       '</div>' +
     '</div>';
-    var pixelOffset = {width: 50, height: 0};
+    var pixelOffset = {width: 50, height: 0}; //offset infowindow for smaller devices and views
     coordInfoWindow.setContent(contentString);
     coordInfoWindow.setOptions({pixelOffset: pixelOffset});
   };
 
+  /**
+  * @name selectListMarker
+  * @description Triggers when a venue from list is selected. Animates marker, creates an infowindow object to a marker and passes the venue information
+  * @function
+  * @param {Object} venue - Represents venue object
+  */
   var selectListMarker = function(venue) {
     animateMarker(venue.marker());
     for (var i = 0; i < self.locations.length; i++) {
@@ -183,68 +280,23 @@ var app = (function() {
     map.panTo(venue.marker().getPosition());
   };
 
+  //Checking for google object on request to maps API.
+  //If google maps API request is successful, initialize map and entire app.
+  //If google maps API request is unsuccessful, display helpful message
   if (typeof google !== 'undefined') {
     // Initializing map
     initMap();
   } else {
-    $('body').append('<p class="bg-danger">...</p>');
+    var panelElement = document.getElementsByClassName('left-panel');
+    $(panelElement).css('display', 'none');
+    $('body').append('<p class="bg-danger">Oops...Something went wrong with Google maps. Please refresh or try later and either accept or decline the geolocation request.</p>');
   }
 
+  // making methods public for ko viewmodel to use
   return {
     map: map,
     setGeoLocs: setGeoLocs,
     getLocations: getLocations,
-    getMarkers: getMarkers,
     selectListMarker: selectListMarker,
   };
 })();
-
-var Venue = function(venue) {
-  this.id = ko.observable(venue.location.id);
-  this.name = ko.observable(venue.location.name);
-  this.formatted_address = ko.observable(venue.location.location.display_address[0]);
-  this.distance = ko.observable(venue.location.distance);
-  this.image_url = ko.observable(venue.location.image_url);
-  this.rating_img_url = ko.observable(venue.location.rating_img_url);
-  this.rating = ko.observable(venue.location.rating);
-  this.snippet_text = ko.observable(venue.location.snippet_text);
-  this.yelpURL = ko.observable(venue.location.mobile_url);
-  this.marker = ko.observable(venue.marker);
-};
-
-var ViewModel = function() {
-  var self = this;
-  this.locations = ko.observableArray([]);
-  this.markers = ko.observableArray([]);
-  this.totalNumLocs = app.getLocations().length;
-  this.totalNumMarkers = app.getMarkers().length;
-  this.inputVal = ko.observable('');
-
-  var addObservableLocations = function() {
-    for (var i = 0; i < self.totalNumLocs; i++) {
-      self.locations.push(new Venue(app.getLocations()[i]));
-    }
-  };
-
-  if (self.totalNumLocs) {
-    addObservableLocations();
-    this.currentListMarker = ko.observable();
-  }
-
-  this.selectListMarker = function(clickedListMarker) {
-    self.currentListMarker(clickedListMarker);
-    app.selectListMarker(self.currentListMarker());
-  };
-
-  this.filteredLocations = ko.computed(function() {
-    return ko.utils.arrayFilter(self.locations(), function(location) {
-      if (location.name().toLowerCase().indexOf(self.inputVal().toLowerCase()) !== -1) {
-        location.marker().setMap(map);
-        return true;
-      } else {
-        location.marker().setMap(null);
-        return false;
-      }
-    });
-  }, this);
-};

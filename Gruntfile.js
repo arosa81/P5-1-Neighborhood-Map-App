@@ -85,7 +85,7 @@ module.exports = function(grunt) {
     mkdir: {
       dev: {
         options: {
-          create: ['dist/images']
+          create: ['dist/images', 'dist/css', 'dist/js', 'dist/lib']
         },
       },
     },
@@ -111,5 +111,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['mkdir']);
   grunt.registerTask('responsive_img', ['clean', 'mkdir', 'copy', 'responsive_images']);
-  grunt.registerTask('uglify', 'cssmin');
+  grunt.registerTask('default', 'cssmin');
+  grunt.registerTask('default', ['uglify']);
 };
