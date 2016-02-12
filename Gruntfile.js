@@ -100,6 +100,17 @@ module.exports = function(grunt) {
         }]
       },
     },
+
+    browserSync: {
+      bsFiles: {
+          src : 'assets/css/*.css'
+      },
+      options: {
+          server: {
+              baseDir: "./"
+          }
+      }
+    }
   });
 
   grunt.loadNpmTasks('grunt-responsive-images');
@@ -108,6 +119,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mkdir');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
+  grunt.loadNpmTasks('grunt-browser-sync');
 
   grunt.registerTask('default', ['mkdir']);
   grunt.registerTask('responsive_img', ['clean', 'mkdir', 'copy', 'responsive_images']);

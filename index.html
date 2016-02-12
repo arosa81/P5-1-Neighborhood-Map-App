@@ -6,25 +6,31 @@
     <title>My Quick Java Fix</title>
   </head>
   <body>
-    <section id="mapSection">
-    </section>
-    <div class="left-panel" >
-      <div class="list-search">
-        <input type="text" class="form-control" placeholder="Start typing to filter list results" aria-describedby="list-search" data-bind="value: inputVal, valueUpdate: ['input', 'afterkeydown']">
+    <div id="mapSection">
+    </div>
+    <div class="flex-container">
+      <div data-bind="visible: app.mapBindingError, mapsErrorVisible: app.mapBindingError">
       </div>
-      <ul class="left-panel-items" data-bind="foreach: filteredLocations">
-        <li class="left-panel-item" data-bind="click: $parent.selectListMarker, visible: $parent.filteredLocations">
-          <h5 data-bind="text: name"></h5>
-          <h6 data-bind="text: formatted_address"></h6>
-          <img src="" alt="" data-bind="attr: {src: rating_img_url}"/>
-          <span data-bind="text: rating"></span>
-        </li>
-      </ul>
+      <div data-bind="visible: app.yelpBindingError, yelpErrorVisible: app.yelpBindingError">
+      </div>
+      <div class="left-panel">
+        <div class="list-search">
+          <input type="text" class="form-control" placeholder="Start typing to filter list results" aria-describedby="list-search" data-bind="value: inputVal, valueUpdate: ['input', 'afterkeydown']">
+        </div>
+        <ul class="left-panel-items" data-bind="foreach: filteredLocations">
+          <li class="left-panel-item" data-bind="click: $parent.selectListMarker, visible: $parent.filteredLocations">
+            <h5 data-bind="text: name"></h5>
+            <h6 data-bind="text: formatted_address"></h6>
+            <img src="" alt="" data-bind="attr: {src: rating_img_url}"/>
+            <span data-bind="text: rating"></span>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/knockout/3.4.0/knockout.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places,drawing,geometry"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places,drawing,geometry?key=AIzaSyBdrrQiOzQAXuUeAixXnMA6TwTw4Y-T0Qs&signed_in=true"></script>
 
     <!-- third party libraries for oauth -->
     <script src="./dist/lib/url.min.js"></script>
@@ -34,6 +40,7 @@
 
     <script src="./dist/js/main.min.js"></script>
     <script src="./dist/js/viewmodel.min.js"></script>
+    <script src="./dist/js/customBindings.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:300italic'>

@@ -15,6 +15,8 @@ var app = (function() {
       locationSearchQueryTerm = 'coffee shops',
       marker,
       markers = [],
+      mapBindingError = ko.observable(false),
+      yelpBindingError = ko.observable(false),
       coordInfoWindow;
       this.locations = [];
 
@@ -103,8 +105,10 @@ var app = (function() {
         ko.applyBindings(new ViewModel());
       },
       error: function(data) {
-        //if error with authenticating to Yelp API display this friendly message
-        $('.left-panel-items').append('<li><p class="bg-danger">Oops...Something went wrong in contacting Yelp. Please refresh or try later.</p></li>');
+        ko.applyBindings(new ViewModel());
+        if (mapBindingError === false) {
+          yelpBindingError(true);
+        }
         console.log("YELP error %o", data);
       }
     };
@@ -146,6 +150,7 @@ var app = (function() {
   var initMap = function() {
     map = new google.maps.Map(document.getElementById('mapSection'), mapOptions);
     that.map = map;
+
     // referenced from https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/Using_geolocation
     // https://developers.google.com/maps/documentation/javascript/examples/map-geolocation
     if ('geolocation' in navigator) {
@@ -257,9 +262,7 @@ var app = (function() {
         '<a href="' + place.location.mobile_url + '" target="_blank" data-bind="attr: {href: yelpURL}, visible: yelpURL">Click here to view details on Yelp</a>' +
       '</div>' +
     '</div>';
-    var pixelOffset = {width: 50, height: 0}; //offset infowindow for smaller devices and views
     coordInfoWindow.setContent(contentString);
-    coordInfoWindow.setOptions({pixelOffset: pixelOffset});
   };
 
   /**
@@ -280,16 +283,15 @@ var app = (function() {
     map.panTo(venue.marker().getPosition());
   };
 
-  //Checking for google object on request to maps API.
-  //If google maps API request is successful, initialize map and entire app.
-  //If google maps API request is unsuccessful, display helpful message
+  // Checking for google object on request to maps API.
+  // If google maps API request is successful, initialize map and entire app.
+  // If google maps API request is unsuccessful, display helpful message
   if (typeof google !== 'undefined') {
     // Initializing map
     initMap();
   } else {
-    var panelElement = document.getElementsByClassName('left-panel');
-    $(panelElement).css('display', 'none');
-    $('body').append('<p class="bg-danger">Oops...Something went wrong with Google maps. Please refresh or try later and either accept or decline the geolocation request.</p>');
+    mapBindingError(true);
+    yelpConnect(' ');
   }
 
   // making methods public for ko viewmodel to use
@@ -298,5 +300,7 @@ var app = (function() {
     setGeoLocs: setGeoLocs,
     getLocations: getLocations,
     selectListMarker: selectListMarker,
+    mapBindingError: mapBindingError,
+    yelpBindingError: yelpBindingError
   };
 })();
