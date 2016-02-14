@@ -37,6 +37,8 @@ var ViewModel = function() {
   this.markers = ko.observableArray([]);
   this.totalNumLocs = app.getLocations().length;
   this.inputVal = ko.observable('');
+  this.mapErrorDetails = ko.observable('Oops...Something went wrong with Google maps. Please refresh or try later and either accept or decline the geolocation request.');
+  this.yelpErrorDetails = ko.observable('Oops...Something went wrong in contacting Yelp. Please refresh or try again at a later time.');
 
   // Pushing app model location objects into observable array for dependency tracking and UI use
   var addObservableLocations = function() {
@@ -87,4 +89,6 @@ var ViewModel = function() {
       }
     });
   }, this);
+
+  // this.mapErrorDetails('Oops...Something went wrong with Google maps. Please refresh or try later and either accept or decline the geolocation request.');
 };

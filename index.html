@@ -10,14 +10,14 @@
     <link rel="stylesheet" href="./dist/css/main.min.css">
   </head>
   <body>
-    <div id="mapSection">
+    <div id="mapSection" data-bind="visible: !app.yelpBindingError()">
     </div>
     <div class="flex-container">
-      <div data-bind="visible: app.mapBindingError, mapsErrorVisible: app.mapBindingError">
+      <div data-bind="visible: app.mapBindingError, text: mapErrorDetails, css: { 'bg-danger': app.mapBindingError }">
       </div>
-      <div data-bind="visible: app.yelpBindingError, yelpErrorVisible: app.yelpBindingError">
+      <div data-bind="visible: app.yelpBindingError, text: yelpErrorDetails, css: { 'bg-danger': app.yelpBindingError }">
       </div>
-      <div class="left-panel">
+      <div class="left-panel" data-bind="visible: totalNumLocs > 0">
         <div class="list-search">
           <input type="text" class="form-control" placeholder="Start typing to filter list results" aria-describedby="list-search" data-bind="value: inputVal, valueUpdate: ['input', 'afterkeydown']">
         </div>
@@ -36,7 +36,6 @@
     <script src="https://cdn.jsdelivr.net/knockout/3.4.0/knockout.js"></script>
     <script src="./dist/js/main.min.js"></script>
     <script src="./dist/js/viewmodel.min.js"></script>
-    <script src="./dist/js/customBindings.min.js"></script>
 
     <!-- third party libraries for oauth -->
     <script src="./dist/lib/url.min.js"></script>

@@ -116,7 +116,7 @@ var app = (function() {
       },
       error: function(data) {
         bindKnockout();
-        if (mapBindingError === false) {
+        if (mapBindingError() === false) {
           yelpBindingError(true);
         }
         console.log("YELP error %o", data);
