@@ -12,13 +12,14 @@ var app = (function() {
         center: locs
       },
       searchRadius = 800,
-      locationSearchQueryTerm = 'coffee shops',
+      locationSearchQueryTerm = 'coffee',
       marker,
       markers = [],
       mapBindingError = ko.observable(false),
       yelpBindingError = ko.observable(false),
       coordInfoWindow;
       this.locations = [];
+
 
   /**
   * @name setGeoLocs
@@ -47,6 +48,10 @@ var app = (function() {
   */
   var getLocations = function() {
     return locations;
+  };
+
+  var bindKnockout = function() {
+    ko.applyBindings(new ViewModel());
   };
 
   /**
@@ -102,10 +107,10 @@ var app = (function() {
           createMarker({location: data.businesses[i], marker: data.businesses[i]});
           that.locations.push({location: data.businesses[i], marker: marker});
         }
-        ko.applyBindings(new ViewModel());
+        bindKnockout();
       },
       error: function(data) {
-        ko.applyBindings(new ViewModel());
+        bindKnockout();
         if (mapBindingError === false) {
           yelpBindingError(true);
         }
@@ -148,15 +153,27 @@ var app = (function() {
   * @function
   */
   var initMap = function() {
+    // Initializing map
     map = new google.maps.Map(document.getElementById('mapSection'), mapOptions);
     that.map = map;
-
     // referenced from https://developer.mozilla.org/en-US/docs/Web/API/Geolocation/Using_geolocation
     // https://developers.google.com/maps/documentation/javascript/examples/map-geolocation
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(success_geo, error_geo);
     } else {
       error_geo(false);
+    }
+  };
+
+  /**
+  * @name googleError
+  * @description Runs when error occurs with google maps.
+  * @function
+  */
+  var googleError = function() {
+    if (typeof google === 'undefined') {
+      mapBindingError(true);
+      yelpConnect(' ');
     }
   };
 
@@ -213,7 +230,7 @@ var app = (function() {
 
   /**
   * @name showMarkerInfoWindow
-  * @description animates a marker when selected for the list.
+  * @description Shows infowindow of a marker when marker is clicked on.
   * @function
   * @param {Object} place - Represents location object from locations array
   */
@@ -283,24 +300,15 @@ var app = (function() {
     map.panTo(venue.marker().getPosition());
   };
 
-  // Checking for google object on request to maps API.
-  // If google maps API request is successful, initialize map and entire app.
-  // If google maps API request is unsuccessful, display helpful message
-  if (typeof google !== 'undefined') {
-    // Initializing map
-    initMap();
-  } else {
-    mapBindingError(true);
-    yelpConnect(' ');
-  }
-
   // making methods public for ko viewmodel to use
   return {
+    initMap: initMap,
+    googleError: googleError,
     map: map,
     setGeoLocs: setGeoLocs,
     getLocations: getLocations,
     selectListMarker: selectListMarker,
     mapBindingError: mapBindingError,
-    yelpBindingError: yelpBindingError
+    yelpBindingError: yelpBindingError,
   };
 })();

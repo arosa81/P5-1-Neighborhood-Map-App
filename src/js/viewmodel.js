@@ -79,10 +79,10 @@ var ViewModel = function() {
   this.filteredLocations = ko.computed(function() {
     return ko.utils.arrayFilter(self.sortedLocations(), function(location) {
       if (location.name().toLowerCase().indexOf(self.inputVal().toLowerCase()) !== -1) {
-        location.marker().setMap(map);
+        location.marker().setVisible(true);
         return true;
       } else {
-        location.marker().setMap(null);
+        location.marker().setVisible(false);
         return false;
       }
     });

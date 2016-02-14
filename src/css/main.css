@@ -21,7 +21,6 @@ body {
   display: -ms-flexbox;
   display: -webkit-flex;
   height: 100vh;
-  align-items: flex-end;
 }
 
 .left-panel {
@@ -29,7 +28,6 @@ body {
   display: -ms-flexbox;
   display: -webkit-flex;
   flex-direction: column;
-  width: 30%;
   max-height: 80vh;
   background-color: #3d3d3e;
   opacity: 0.7;
@@ -110,13 +108,13 @@ body {
   .flex-container {
     width: 100%;
     justify-content: center;
+    align-items: flex-end;
   }
 
   .left-panel {
     overflow-y: scroll;
     background-color: #3d3d3e;
     opacity: 0.7;
-    width: 80%;
     max-height: 35vh;
     border-radius: 5px;
     padding: 0.5em;

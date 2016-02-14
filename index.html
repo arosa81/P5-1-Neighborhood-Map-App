@@ -4,6 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>My Quick Java Fix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:300italic'>
+    <link rel="stylesheet" href="./dist/css/main.min.css">
   </head>
   <body>
     <div id="mapSection">
@@ -30,7 +34,9 @@
 
     <script src="https://cdn.jsdelivr.net/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/knockout/3.4.0/knockout.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?libraries=places,drawing,geometry?key=AIzaSyBdrrQiOzQAXuUeAixXnMA6TwTw4Y-T0Qs&signed_in=true"></script>
+    <script src="./dist/js/main.min.js"></script>
+    <script src="./dist/js/viewmodel.min.js"></script>
+    <script src="./dist/js/customBindings.min.js"></script>
 
     <!-- third party libraries for oauth -->
     <script src="./dist/lib/url.min.js"></script>
@@ -38,12 +44,6 @@
     <script src="./dist/lib/cryptojs/enc-base64-min.js"></script>
     <script src="./dist/js/oauth-signature.min.js"></script>
 
-    <script src="./dist/js/main.min.js"></script>
-    <script src="./dist/js/viewmodel.min.js"></script>
-    <script src="./dist/js/customBindings.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:300italic'>
-    <link rel="stylesheet" href="./dist/css/main.min.css">
+    <script async src="https://maps.googleapis.com/maps/api/js?libraries=places,drawing,geometry?key=AIzaSyBdrrQiOzQAXuUeAixXnMA6TwTw4Y-T0Qs&signed_in=true&callback=app.initMap" onerror="app.googleError()"></script>
   </body>
 </html>
