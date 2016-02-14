@@ -50,6 +50,11 @@ var app = (function() {
     return locations;
   };
 
+  /**
+  * @name bindKnockout
+  * @description initaties the binding to knockout ViewModel object
+  * @function
+  */
   var bindKnockout = function() {
     ko.applyBindings(new ViewModel());
   };

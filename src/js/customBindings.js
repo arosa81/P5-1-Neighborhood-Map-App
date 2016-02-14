@@ -1,5 +1,9 @@
 var app = app || {};
 (function() {
+  /**
+  * @name mapsErrorVisible
+  * @description custom binding that checks for google map error and displays/hides appropriate message
+  */
   ko.bindingHandlers.mapsErrorVisible = {
     init: function(element, valueAccessor) {
       var mapErrorVal = valueAccessor();
@@ -13,6 +17,10 @@ var app = app || {};
     }
   };
 
+  /**
+  * @name yelpErrorVisible
+  * @description custom binding that checks for yelp error and displays/hides appropriate message
+  */
   ko.bindingHandlers.yelpErrorVisible = {
     init: function(element, valueAccessor) {
       var yelpErrorVal = valueAccessor();
